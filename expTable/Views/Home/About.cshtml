@@ -1,7 +1,129 @@
 ﻿@{
-    ViewBag.Title = "About";
+    ViewBag.Title = "Contact";
+    Layout = null;
 }
-<h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
+<html>
+<head>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/r/dt/dt-1.10.9/datatables.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/r/dt/dt-1.10.9/datatables.min.css" rel="stylesheet">
 
-<p>Use this area to provide additional information.</p>
+    <script src="http://code.jquery.com/jquery-1.12.4.js"
+            integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU="
+            crossorigin="anonymous"></script>
+
+    <script src="https://cdn.datatables.net/r/dt/dt-1.10.9/datatables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.scrollto/2.1.2/jquery.scrollTo.min.js"></script>
+
+
+
+
+
+
+
+    <script>
+        /* Formatting function for row details - modify as you need */
+        function format(d) {
+            // d is the original data object for the row
+            return '<div class="slider">' +
+                '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
+                '<tr>' +
+                '<td>Full name:</td>' +
+                '<td>' + d.name + '</td>' +
+                '</tr>' +
+                '<tr>' +
+                '<td>Extension number:</td>' +
+                '<td>' + d.extn + '</td>' +
+                '</tr>' +
+                '<tr>' +
+                '<td>Extra info:</td>' +
+                '<td>And any further details here (images etc)...</td>' +
+                '</tr>' +
+                '</table>' +
+                '</div>';
+        }
+
+        $(document).ready(function () {
+            var table = $('#example').DataTable({
+                "ajax": 'https://api.myjson.com/bins/16lp6',
+                scrollY: 250,
+                deferRender: true,
+                scroller: true,
+                "columns": [
+                    {
+                        "class": 'details-control',
+                        "orderable": false,
+                        "data": null,
+                        "defaultContent": ''
+                    },
+                    { "data": "name" },
+                    { "data": "position" },
+                    { "data": "office" },
+                    { "data": "salary" },
+                    { "data": "extn", "visible": false }
+
+                ],
+                "order": [[1, 'asc']]
+            });
+
+            // Add event listener for opening and closing details
+            $('#example tbody').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = table.row(tr);
+
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    $('div.slider', row.child()).slideUp(function () {
+                        row.child.hide();
+                        tr.removeClass('shown');
+                    });
+                }
+                else {
+                    // Open this row
+                    row.child(format(row.data()), 'no-padding').show();
+                    tr.addClass('shown');
+
+                    $('div.slider', row.child()).slideDown();
+                }
+            });
+        });
+    </script>
+    <style>
+        td.details-control {
+            background: url('https://raw.githubusercontent.com/DataTables/DataTables/1.10.7/examples/resources/details_open.png') no-repeat center center;
+            cursor: pointer;
+        }
+
+        tr.shown td.details-control {
+            background: url('https://raw.githubusercontent.com/DataTables/DataTables/1.10.7/examples/resources/details_close.png') no-repeat center center;
+        }
+    </style>
+</head>
+<body>
+
+
+    <table id="example" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Office</th>
+                <th>Salary</th>
+                <th>Extn.</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Office</th>
+                <th>Salary</th>
+                <th>Extn.</th>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+
+</html>
